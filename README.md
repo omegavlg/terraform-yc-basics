@@ -24,20 +24,34 @@
 
 Через интерфес Я.Облака создаем сервисный аккаунт и генерируем для него ключ.
 
-
+<img src = "img/01.png" width = 100%>
 
 Генерируем ключ ed25519
 ```
 ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -q -N ""
 ```
 
+Прописываем ключ в переменную **vms_ssh_public_root_key** в файле variables.tf
 
+Выполняем команды:
 
+```
+terraform init
+```
+<img src = "img/02.png" width = 100%>
 
+```
+terraform plan
+```
 
+<img src = "img/03.png" width = 100%>
+<img src = "img/04.png" width = 100%>
+<img src = "img/05.png" width = 100%>
+<img src = "img/06.png" width = 100%>
 
-
-
+```
+terraform apply
+```
 
 
 
