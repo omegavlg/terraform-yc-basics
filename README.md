@@ -71,7 +71,7 @@ code = FailedPrecondition desc = Platform "standart-v4" not found
 
 Получаем еще одну ошибку:
 
-<img src = "img/08.png" width = 100%>
+<img src = "img/09.png" width = 100%>
 
 Ошибка указывает, что количество ядер, указанное в конфигурации (**cores = 1**), недоступно для платформы **standard-v1**. Доступные значения для cores на этой платформе — **2** или **4**.
 
