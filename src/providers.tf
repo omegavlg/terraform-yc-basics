@@ -11,6 +11,6 @@ provider "yandex" {
   # token     = var.token
   cloud_id                 = "b1glskia0dbos36k28i8"
   folder_id                = "b1g6c8c6gi8ud4pc3deq"
-  zone                     = var.default_zone
+  zone                     = "ru-central1-a"
   service_account_key_file = file("~/.authorized_key.json")
 }
