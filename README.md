@@ -77,7 +77,16 @@ code = FailedPrecondition desc = Platform "standart-v4" not found
 
 Изменяем конфигурацию и запускаем.
 
+<img src = "img/10.png" width = 100%>
+<img src = "img/11.png" width = 100%>
+<img src = "img/12.png" width = 100%>
 
+Видим, что команда выполнена успешно.
+
+Переходим на Яндекс облако и так же видим, что ВМ успешно создалась и запустилась и ей присвоился внутренний и внешний IP-адреса.
+
+<img src = "img/13.png" width = 100%>
+<img src = "img/14.png" width = 100%>
 
 
 
