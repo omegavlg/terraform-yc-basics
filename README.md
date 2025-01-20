@@ -467,19 +467,9 @@ terraform apply
 <img src = "img/18.png" width = 100%>
 <img src = "img/19.png" width = 100%>
 
+Видим, что в Я.Облаке создалась еще одна ВМ в другой зоне.
 
-
-
-
-
-
-
-
-
-
-
-
-
+<img src = "img/20.png" width = 100%>
 
 ---
 ## Задание 4
@@ -490,6 +480,66 @@ terraform apply
 В качестве решения приложите вывод значений ip-адресов команды ```terraform output```.
 
 ### Ответ:
+
+В файл outputs.tf добавим следующий код:
+
+**outputs.tf**
+
+```
+output "platform_instance" {
+  value = {
+    instance_name = yandex_compute_instance.platform.name
+    external_ip   = yandex_compute_instance.platform.network_interface.0.ip_address
+    fqdn          = "${yandex_compute_instance.platform.name}.${var.vpc_name}.internal"
+  }
+}
+
+output "platform_db_instance" {
+  value = {
+    instance_name = yandex_compute_instance.platform_db.name
+    external_ip   = yandex_compute_instance.platform_db.network_interface.0.ip_address
+    fqdn          = "${yandex_compute_instance.platform_db.name}.${var.vpc_db_name}.internal"
+  }
+}
+```
+Для применения изменений выполним команду:
+
+```
+terraform apply
+```
+
+<img src = "img/21.png" width = 100%>
+
+И теперь выполним команду:
+
+```
+terraform output
+```
+
+<img src = "img/22.png" width = 100%>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ---
 ## Задание 5
