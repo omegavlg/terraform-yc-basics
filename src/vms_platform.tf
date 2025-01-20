@@ -1,5 +1,3 @@
-### 
-
 variable "vm_web_image_family" {
   type        = string
   default     = "ubuntu-2004-lts"
@@ -17,8 +15,8 @@ variable "vm_web_preemptible" {
   default     = true
   description = "Whether the VM is preemptible."
 }
-
-/*variable "vm_web_name" {
+/*
+variable "vm_web_name" {
   type        = string
   default     = "netology-develop-platform-web"
   description = "Name of the VM instance."
@@ -70,7 +68,8 @@ variable "vm_db_core_fraction" {
   type        = number
   default     = 20
   description = "Core fraction for the DB VM."
-}*/
+}
+*/
 
 variable "project_name" {
   description = "netology"
