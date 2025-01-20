@@ -90,12 +90,12 @@ code = FailedPrecondition desc = Platform "standart-v4" not found
 
 Подключаемся по ssh к созданной ВМ.
 
-
-
+```
+ssh -l ubuntu 51.XX.XX.222
+curl ifconfig.me
+```
 <img src = "img/15.png" width = 100%>
 
-
-ssh ubuntu@vm_ip_address
 
 
 
