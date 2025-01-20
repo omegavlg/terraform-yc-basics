@@ -570,7 +570,7 @@ resource "yandex_compute_instance" "platform" {
 ```
 ```
 resource "yandex_compute_instance" "platform_db" {
-  ##name        = var.vm_db_name
+## name        = var.vm_db_name
   name        = local.vm_db_name
   platform_id = var.vm_web_image_platform
   zone = var.default_db_zone
@@ -585,7 +585,7 @@ resource "yandex_compute_instance" "platform_db" {
 ---
 ## Задание 6
 
-1. Вместо использования трёх переменных  ".._cores",".._memory",".._core_fraction" в блоке  resources {...}, объедините их в единую map-переменную **vms_resources** и  внутри неё конфиги обеих ВМ в виде вложенного map(object).  
+1. Вместо использования трёх переменных  ".._cores",".._memory",".._core_fraction" в блоке  resources {...}, объедините их в единую map-переменную **vms_resources** и внутри неё конфиги обеих ВМ в виде вложенного map(object).  
    ```
    пример из terraform.tfvars:
    vms_resources = {
@@ -621,3 +621,84 @@ resource "yandex_compute_instance" "platform_db" {
 
 ### Ответ:
 
+Пререработаем конфигурационные файлы следующим образом:
+
+Создаем **terraform.tfvars** со следующим содержимым:
+
+**terraform.tfvars**
+
+```
+vms_resources = {
+    web = { 
+        cores         = 2
+        memory        = 1
+        core_fraction = 5
+    },
+    db = {
+        cores          = 2
+        memory        = 2
+        core_fraction = 20
+    }
+}
+
+metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILGDJdtFM56kwGfTh9tNGYqnI7TtB33G5soUvc6emCpU dnd@dnd-VirtualBox"
+}
+```
+
+В файл **vms_platform.tf** добавим новые переменные:
+
+**vms_platform.tf** 
+
+```
+variable "vms_resources" {
+  type = map(object({
+    cores         = number
+    memory        = number
+    core_fraction = number
+  }))
+  description = "Resources VM"
+}
+
+variable "metadata" {
+  type        = map(string)
+  description = "Metadata VM"
+}
+```
+
+В файл **main.tf** вносим изменения:
+
+**main.tf**
+
+```
+  resources {
+    cores         = var.vms_resources.web.cores
+    memory        = var.vms_resources.web.memory
+    core_fraction = var.vms_resources.web.core_fraction
+  }
+
+  metadata = var.metadata
+```
+```
+  resources {
+  /*
+    cores         = var.vm_db_cores
+    memory        = var.vm_db_memory
+    core_fraction = var.vm_db_core_fraction
+  */
+    cores         = var.vms_resources.db.cores
+    memory        = var.vms_resources.db.memory
+    core_fraction = var.vms_resources.db.core_fraction
+  }
+
+  metadata = var.metadata
+```
+
+Для проверки выполним команду:
+
+```
+terraform plan
+```
+
+<img src = "img/24.png" width = 100%>
