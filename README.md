@@ -88,8 +88,14 @@ code = FailedPrecondition desc = Platform "standart-v4" not found
 <img src = "img/13.png" width = 100%>
 <img src = "img/14.png" width = 100%>
 
+Подключаемся по ssh к созданной ВМ.
 
 
+
+<img src = "img/15.png" width = 100%>
+
+
+ssh ubuntu@vm_ip_address
 
 
 
