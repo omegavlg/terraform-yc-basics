@@ -48,18 +48,6 @@ variable "vm_web_vms_ssh_root_key" {
   description = "ssh-keygen -t ed25519"
 }
 
-variable "vm_db_image_family" {
-  type        = string
-  default     = "ubuntu-2004-lts"
-  description = "Family of the image to use for the DB VM."
-}
-
-variable "vm_db_image_platform" {
-  type        = string
-  default     = "standard-v1"
-  description = "Platform for the DB VM."
-}
-
 variable "vm_db_name" {
   type        = string
   default     = "netology-develop-platform-db"
@@ -82,22 +70,4 @@ variable "vm_db_core_fraction" {
   type        = number
   default     = 20
   description = "Core fraction for the DB VM."
-}
-
-variable "vm_db_preemptible" {
-  type        = bool
-  default     = true
-  description = "Whether the DB VM is preemptible."
-}
-
-variable "vm_db_zone" {
-  type        = string
-  default     = "ru-central1-b"
-  description = "Zone for the DB VM."
-}
-
-variable "vm_db_ssh_key" {
-  type        = string
-  default     = "<your_ssh_ed25519_key>"
-  description = "SSH key for accessing the DB VM."
 }

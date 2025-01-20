@@ -29,3 +29,21 @@ variable "vpc_name" {
   default     = "develop"
   description = "VPC network & subnet name"
 }
+
+variable "default_db_zone" {
+  type        = string
+  default     = "ru-central1-b"
+  description = "https://cloud.yandex.ru/docs/overview/concepts/geo-scope"
+}
+
+variable "default_db_cidr" {
+  type        = list(string)
+  default     = ["10.129.1.0/24"]
+  description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
+}
+
+variable "vpc_db_name" {
+  type        = string
+  default     = "develop-db"
+  description = "VPC network & subnet name"
+}

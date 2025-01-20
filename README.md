@@ -287,9 +287,185 @@ terraform plan
 
 ### Ответ:
 
+Создаем файл **vms_platform.tf** со следущим содержимым:
 
+**vms_platform.tf**
 
+```
+### 
 
+variable "vm_web_image_family" {
+  type        = string
+  default     = "ubuntu-2004-lts"
+  description = "Family of the image to use for the VM."
+}
+
+variable "vm_web_image_platform" {
+  type        = string
+  default     = "standard-v1"
+  description = "Platform for the VM instance."
+}
+
+variable "vm_web_name" {
+  type        = string
+  default     = "netology-develop-platform-web"
+  description = "Name of the VM instance."
+}
+
+variable "vm_web_cores" {
+  type        = number
+  default     = 2
+  description = "Number of CPU cores for the VM."
+}
+
+variable "vm_web_memory" {
+  type        = number
+  default     = 1
+  description = "Amount of RAM in GB for the VM."
+}
+
+variable "vm_web_core_fraction" {
+  type        = number
+  default     = 5
+  description = "Core fraction for the VM instance."
+}
+
+variable "vm_web_preemptible" {
+  type        = bool
+  default     = true
+  description = "Whether the VM is preemptible."
+}
+
+variable "vm_web_vms_ssh_root_key" {
+  type        = string
+  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILGDJdtFM56kwGfTh9tNGYqnI7TtB33G5soUvc6emCpU dnd@dnd-VirtualBox"
+  description = "ssh-keygen -t ed25519"
+}
+
+variable "vm_db_name" {
+  type        = string
+  default     = "netology-develop-platform-db"
+  description = "Name of the DB VM."
+}
+
+variable "vm_db_cores" {
+  type        = number
+  default     = 2
+  description = "Number of CPU cores for the DB VM."
+}
+
+variable "vm_db_memory" {
+  type        = number
+  default     = 2
+  description = "Amount of RAM in GB for the DB VM."
+}
+
+variable "vm_db_core_fraction" {
+  type        = number
+  default     = 20
+  description = "Core fraction for the DB VM."
+}
+```
+
+В файл **main.tf** вносим изменения:
+
+**main.tf**
+
+```
+resource "yandex_vpc_network" "develop" {
+  name = var.vpc_name
+}
+resource "yandex_vpc_subnet" "develop" {
+  name           = var.vpc_name
+  zone           = var.default_zone
+  network_id     = yandex_vpc_network.develop.id
+  v4_cidr_blocks = var.default_cidr
+}
+
+data "yandex_compute_image" "ubuntu" {
+  family =  var.vm_web_image_family
+}
+
+resource "yandex_compute_instance" "platform" {
+  name        = var.vm_web_name
+  platform_id = var.vm_web_image_platform
+  resources {
+    cores         = var.vm_web_cores
+    memory        = var.vm_web_memory
+    core_fraction = var.vm_web_core_fraction
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+
+  scheduling_policy {
+    preemptible = var.vm_web_preemptible
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop.id
+    nat       = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:${var.vm_web_vms_ssh_root_key}"
+  }
+}
+
+### vm_db
+
+resource "yandex_vpc_subnet" "develop_db" {
+  name           = var.vpc_db_name
+  zone           = var.default_db_zone
+  network_id     = yandex_vpc_network.develop.id
+  v4_cidr_blocks = var.default_db_cidr
+}
+
+resource "yandex_compute_instance" "platform_db" {
+  name        = var.vm_db_name
+  platform_id = var.vm_web_image_platform
+  zone = var.default_db_zone
+  
+  resources {
+    cores         = var.vm_db_cores
+    memory        = var.vm_db_memory
+    core_fraction = var.vm_db_core_fraction
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+
+  scheduling_policy {
+    preemptible = var.vm_web_preemptible
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop_db.id
+    nat       = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:${var.vm_web_vms_ssh_root_key}"
+  }
+}
+```
+Выполняем команды:
+
+```
+terraform plan
+terraform apply
+```
+<img src = "img/17.png" width = 100%>
+<img src = "img/18.png" width = 100%>
+<img src = "img/19.png" width = 100%>
 
 
 
