@@ -58,7 +58,7 @@ variable "vm_web_cores" {
 
 variable "vm_web_memory" {
   type        = number
-  default     = 4
+  default     = 1
   description = "Amount of RAM in GB for the VM."
 }
 
