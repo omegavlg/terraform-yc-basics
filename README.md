@@ -20,7 +20,7 @@
 - скриншот консоли, curl должен отобразить тот же внешний ip-адрес;
 - ответы на вопросы.
 
-### Ответ
+### Ответ:
 
 Через интерфес Я.Облака создаем сервисный аккаунт и генерируем для него ключ.
 
@@ -111,8 +111,180 @@ curl ifconfig.me
 2. Объявите нужные переменные в файле variables.tf, обязательно указывайте тип переменной. Заполните их **default** прежними значениями из main.tf. 
 3. Проверьте terraform plan. Изменений быть не должно. 
 
+### Ответ:
 
-### Ответ
+Изменяем конфигурационные файлы, убрав хардкод-значения для ресурсов **yandex_compute_image** и **yandex_compute_instance** на **отдельные** переменные.
+
+Конфиги теперь выглядат так:
+
+**main.tf**
+
+```
+resource "yandex_vpc_network" "develop" {
+  name = var.vpc_name
+}
+resource "yandex_vpc_subnet" "develop" {
+  name           = var.vpc_name
+  zone           = var.default_zone
+  network_id     = yandex_vpc_network.develop.id
+  v4_cidr_blocks = var.default_cidr
+}
+
+data "yandex_compute_image" "ubuntu" {
+  family =  var.vm_web_image_family
+}
+resource "yandex_compute_instance" "platform" {
+  name        = var.vm_web_name
+  platform_id = var.vm_web_image_platform
+  resources {
+    cores         = var.vm_web_cores
+    memory        = var.vm_web_memory
+    core_fraction = var.vm_web_core_fraction
+  }
+  boot_disk {
+    initialize_params {
+      image_id = data.yandex_compute_image.ubuntu.image_id
+    }
+  }
+  scheduling_policy {
+    preemptible = var.vm_web_preemptible
+  }
+  network_interface {
+    subnet_id = yandex_vpc_subnet.develop.id
+    nat       = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    ssh-keys           = "ubuntu:${var.vm_web_vms_ssh_root_key}"
+  }
+
+}
+```
+
+**variables.tf**
+```
+###cloud vars
+
+ variable "cloud_id" {
+  type        = string
+  description = "https://cloud.yandex.ru/docs/resource-manager/operations/cloud/get-id"
+  default = "b1glskia0dbos36k28i8"
+}
+
+variable "folder_id" {
+  type        = string
+  description = "https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id"
+  default = "b1g6c8c6gi8ud4pc3deq"
+}
+
+variable "default_zone" {
+  type        = string
+  default     = "ru-central1-a"
+  description = "https://cloud.yandex.ru/docs/overview/concepts/geo-scope"
+}
+
+variable "default_cidr" {
+  type        = list(string)
+  default     = ["10.128.1.0/24"]
+  description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
+}
+
+variable "vpc_name" {
+  type        = string
+  default     = "develop"
+  description = "VPC network & subnet name"
+}
+
+variable "vm_web_image_family" {
+  type        = string
+  default     = "ubuntu-2004-lts"
+  description = "Family of the image to use for the VM."
+}
+
+variable "vm_web_image_platform" {
+  type        = string
+  default     = "standard-v1"
+  description = "Platform for the VM instance."
+}
+
+variable "vm_web_name" {
+  type        = string
+  default     = "netology-develop-platform-web"
+  description = "Name of the VM instance."
+}
+
+variable "vm_web_cores" {
+  type        = number
+  default     = 2
+  description = "Number of CPU cores for the VM."
+}
+
+variable "vm_web_memory" {
+  type        = number
+  default     = 4
+  description = "Amount of RAM in GB for the VM."
+}
+
+variable "vm_web_core_fraction" {
+  type        = number
+  default     = 5
+  description = "Core fraction for the VM instance."
+}
+
+variable "vm_web_preemptible" {
+  type        = bool
+  default     = true
+  description = "Whether the VM is preemptible."
+}
+
+variable "vm_web_vms_ssh_root_key" {
+  type        = string
+  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILGDJdtFM56kwGfTh9tNGYqnI7TtB33G5soUvc6emCpU dnd@dnd-VirtualBox"
+  description = "ssh-keygen -t ed25519"
+}
+```
+
+Дополнительно уберем хардкод-значения в файле:
+
+**providers.tf**
+
+```
+terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+    }
+  }
+  required_version = ">=1.5"
+}
+
+provider "yandex" {
+  # token     = var.token
+  cloud_id                 = var.cloud_id
+  folder_id                = var.folder_id
+  zone                     = var.default_zone
+  service_account_key_file = file("~/.authorized_key.json")
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ---
 ## Задание 3
@@ -120,6 +292,8 @@ curl ifconfig.me
 1. Создайте в корне проекта файл 'vms_platform.tf' . Перенесите в него все переменные первой ВМ.
 2. Скопируйте блок ресурса и создайте с его помощью вторую ВМ в файле main.tf: **"netology-develop-platform-db"** ,  ```cores  = 2, memory = 2, core_fraction = 20```. Объявите её переменные с префиксом **vm_db_** в том же файле ('vms_platform.tf').  ВМ должна работать в зоне "ru-central1-b"
 3. Примените изменения.
+
+### Ответ:
 
 ---
 ## Задание 4
@@ -129,7 +303,7 @@ curl ifconfig.me
 
 В качестве решения приложите вывод значений ip-адресов команды ```terraform output```.
 
-### Ответ
+### Ответ:
 
 ---
 ## Задание 5
@@ -138,7 +312,7 @@ curl ifconfig.me
 2. Замените переменные внутри ресурса ВМ на созданные вами local-переменные.
 3. Примените изменения.
 
-### Ответ
+### Ответ:
 
 ---
 ## Задание 6
@@ -177,5 +351,5 @@ curl ifconfig.me
 5. Найдите и закоментируйте все, более не используемые переменные проекта.
 6. Проверьте terraform plan. Изменений быть не должно.
 
-### Ответ
+### Ответ:
 
