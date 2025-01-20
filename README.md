@@ -518,29 +518,6 @@ terraform output
 
 <img src = "img/22.png" width = 100%>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ---
 ## Задание 5
 
@@ -549,6 +526,61 @@ terraform output
 3. Примените изменения.
 
 ### Ответ:
+
+Файл **locals.tf** заполним следующим содержимым:
+
+**locals.tf**
+
+```
+locals {
+  vm_web_name = "${var.project_name}-${var.environment}-platform-web"
+  vm_db_name  = "${var.project_name}-${var.environment}-platform-db"
+}
+```
+
+В файл **vms_platform.tf** добавим новые переменные:
+
+**vms_platform.tf** 
+
+```
+variable "project_name" {
+  description = "netology"
+  type        = string
+  default     = "netology"
+}
+
+variable "environment" {
+  description = "develop"
+  type        = string
+  default     = "develop"
+}
+```
+
+В файл **main.tf** так же внесем изменения:
+
+В ресурсе **yandex_compute_instance.platform** заменяем значение **name** на **local.vm_web_name**, а в ресурсе **yandex_compute_instance.platform_db** значение на name на **local.vm_db_name**:
+
+```
+resource "yandex_compute_instance" "platform" {
+##  name        = var.vm_web_name
+  name        = local.vm_web_name
+  platform_id = var.vm_web_image_platform
+...
+}
+```
+```
+resource "yandex_compute_instance" "platform_db" {
+  ##name        = var.vm_db_name
+  name        = local.vm_db_name
+  platform_id = var.vm_web_image_platform
+  zone = var.default_db_zone
+...
+}
+```
+
+При выполнении команды **terraform apply** не произойдет, потому что названия ВМ при этом не изменились.
+
+<img src = "img/23.png" width = 100%>
 
 ---
 ## Задание 6

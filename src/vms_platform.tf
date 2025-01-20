@@ -12,11 +12,11 @@ variable "vm_web_image_platform" {
   description = "Platform for the VM instance."
 }
 
-variable "vm_web_name" {
+/*variable "vm_web_name" {
   type        = string
   default     = "netology-develop-platform-web"
   description = "Name of the VM instance."
-}
+}*/
 
 variable "vm_web_cores" {
   type        = number
@@ -48,11 +48,11 @@ variable "vm_web_vms_ssh_root_key" {
   description = "ssh-keygen -t ed25519"
 }
 
-variable "vm_db_name" {
+/*variable "vm_db_name" {
   type        = string
   default     = "netology-develop-platform-db"
   description = "Name of the DB VM."
-}
+}*/
 
 variable "vm_db_cores" {
   type        = number
@@ -70,4 +70,16 @@ variable "vm_db_core_fraction" {
   type        = number
   default     = 20
   description = "Core fraction for the DB VM."
+}
+
+variable "project_name" {
+  description = "netology"
+  type        = string
+  default     = "netology"
+}
+
+variable "environment" {
+  description = "develop"
+  type        = string
+  default     = "develop"
 }

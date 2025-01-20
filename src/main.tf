@@ -13,8 +13,10 @@ data "yandex_compute_image" "ubuntu" {
 }
 
 resource "yandex_compute_instance" "platform" {
-  name        = var.vm_web_name
+##  name        = var.vm_web_name
+  name        = local.vm_web_name
   platform_id = var.vm_web_image_platform
+  
   resources {
     cores         = var.vm_web_cores
     memory        = var.vm_web_memory
@@ -52,7 +54,8 @@ resource "yandex_vpc_subnet" "develop_db" {
 }
 
 resource "yandex_compute_instance" "platform_db" {
-  name        = var.vm_db_name
+  ##name        = var.vm_db_name
+  name        = local.vm_db_name
   platform_id = var.vm_web_image_platform
   zone = var.default_db_zone
   
